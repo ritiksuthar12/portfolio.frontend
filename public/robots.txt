@@ -1,0 +1,14 @@
+# Robots.txt for Ritik Suthar Portfolio
+# Production Domain: https://portfolio-ritik-live.vercel.app
+# If you add a custom domain (e.g. https://ritiksuthar.dev), update the Sitemap URL below.
+
+User-agent: *
+Allow: /
+
+# Disallow indexing private admin portal modal states or auth paths
+Disallow: /admin
+Disallow: /?admin=true
+
+# Host & Sitemap specification
+Host: https://portfolio-ritik-live.vercel.app
+Sitemap: https://portfolio-ritik-live.vercel.app/sitemap.xml
