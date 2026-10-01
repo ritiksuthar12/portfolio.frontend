@@ -22,7 +22,7 @@ export default function TechStack({
             <button
               onClick={onAddSkill}
               className="action-btn-sm"
-              style={{ backgroundColor: '#111827', color: '#fff', borderColor: '#111827' }}
+              style={{ backgroundColor: 'var(--primary-btn-bg)', color: 'var(--primary-btn-text)', borderColor: 'var(--primary-btn-bg)' }}
               title="Add New Skill"
             >
               <Plus size={14} /> Add

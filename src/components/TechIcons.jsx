@@ -96,7 +96,7 @@ export const InstagramIcon = ({ size = 20, color = "currentColor" }) => (
 );
 
 export const ExpressIcon = () => (
-  <span style={{ fontWeight: '800', fontSize: '0.8rem', letterSpacing: '-0.03em', color: '#111827' }}>
+  <span style={{ fontWeight: '800', fontSize: '0.8rem', letterSpacing: '-0.03em', color: 'currentColor' }}>
     ex
   </span>
 );
@@ -111,11 +111,11 @@ export const renderTechIcon = (name) => {
   if (norm.includes('tailwind')) return <TailwindIcon />;
   if (norm.includes('html')) return <HtmlIcon />;
   if (norm.includes('css')) return <CssIcon />;
-  if (norm.includes('git')) return <GithubIcon size={20} color="#111827" />;
+  if (norm.includes('git')) return <GithubIcon size={20} color="currentColor" />;
   if (norm.includes('express')) return <ExpressIcon />;
-  if (norm.includes('algo') || norm.includes('logic')) return <Code size={20} color="#111827" />;
-  if (norm.includes('api') || norm.includes('server')) return <Server size={20} color="#111827" />;
-  if (norm.includes('db') || norm.includes('sql')) return <Database size={20} color="#111827" />;
+  if (norm.includes('algo') || norm.includes('logic')) return <Code size={20} color="currentColor" />;
+  if (norm.includes('api') || norm.includes('server')) return <Server size={20} color="currentColor" />;
+  if (norm.includes('db') || norm.includes('sql')) return <Database size={20} color="currentColor" />;
 
-  return <Box size={20} color="#111827" />;
+  return <Box size={20} color="currentColor" />;
 };

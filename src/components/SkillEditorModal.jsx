@@ -68,12 +68,12 @@ export default function SkillEditorModal({
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#111827' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-primary)' }}>
             {skill ? 'Edit Skill' : 'Add New Skill'}
           </h2>
           <button
             onClick={onClose}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
           >
             <X size={20} />
           </button>
@@ -172,9 +172,9 @@ export default function SkillEditorModal({
                 id="skillFeaturedCheck"
                 checked={formData.featured}
                 onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                style={{ width: '16px', height: '16px', accentColor: '#111827', cursor: 'pointer' }}
+                style={{ width: '16px', height: '16px', accentColor: 'var(--primary-btn-bg)', cursor: 'pointer' }}
               />
-              <label htmlFor="skillFeaturedCheck" style={{ fontSize: '0.85rem', fontWeight: '600', color: '#111827', cursor: 'pointer' }}>
+              <label htmlFor="skillFeaturedCheck" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-primary)', cursor: 'pointer' }}>
                 Pin to Tech Stack main grid (Home page)
               </label>
             </div>

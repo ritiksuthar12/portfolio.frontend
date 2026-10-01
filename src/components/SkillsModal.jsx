@@ -30,10 +30,10 @@ export default function SkillsModal({
       >
         <div className="modal-header">
           <div>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#111827' }}>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)' }}>
               All Skills & Technologies ({skills.length})
             </h2>
-            <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
               Technologies, frameworks, and programming tools I work with.
             </p>
           </div>
@@ -74,9 +74,9 @@ export default function SkillsModal({
                   fontSize: '0.8rem',
                   borderRadius: '9999px',
                   border: '1px solid',
-                  borderColor: selectedCategory === cat ? '#111827' : 'var(--border-light)',
-                  backgroundColor: selectedCategory === cat ? '#111827' : '#ffffff',
-                  color: selectedCategory === cat ? '#ffffff' : '#4b5563',
+                  borderColor: selectedCategory === cat ? 'var(--primary-btn-bg)' : 'var(--border-light)',
+                  backgroundColor: selectedCategory === cat ? 'var(--primary-btn-bg)' : 'var(--bg-card)',
+                  color: selectedCategory === cat ? 'var(--primary-btn-text)' : 'var(--text-secondary)',
                   cursor: 'pointer',
                   fontWeight: '600',
                   transition: 'all 0.2s'
@@ -100,7 +100,7 @@ export default function SkillsModal({
                   border: '1px solid var(--border-light)',
                   borderRadius: '0.875rem',
                   padding: '1rem',
-                  backgroundColor: '#ffffff',
+                  backgroundColor: 'var(--bg-card)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '0.65rem'
@@ -111,7 +111,7 @@ export default function SkillsModal({
                     <div className="tech-icon-wrap" style={{ width: '28px', height: '28px' }}>
                       {renderTechIcon(skill.icon || skill.name)}
                     </div>
-                    <span style={{ fontWeight: '700', fontSize: '0.9rem', color: '#111827' }}>
+                    <span style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
                       {skill.name}
                     </span>
                   </div>
@@ -120,7 +120,7 @@ export default function SkillsModal({
                     <div style={{ display: 'flex', gap: '4px' }}>
                       <button
                         onClick={() => onEditSkill(skill)}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280' }}
+                        style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
                       >
                         <Edit2 size={13} />
                       </button>
@@ -134,18 +134,18 @@ export default function SkillsModal({
                   )}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', color: '#6b7280' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                   <span>{skill.category}</span>
-                  <span style={{ fontWeight: '600', color: '#111827' }}>{skill.proficiency || 85}%</span>
+                  <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{skill.proficiency || 85}%</span>
                 </div>
 
                 {/* Progress bar */}
-                <div style={{ width: '100%', height: '6px', backgroundColor: '#f3f4f6', borderRadius: '9999px', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-subtle)', borderRadius: '9999px', overflow: 'hidden' }}>
                   <div
                     style={{
                       width: `${skill.proficiency || 85}%`,
                       height: '100%',
-                      backgroundColor: '#111827',
+                      backgroundColor: 'var(--primary-btn-bg)',
                       borderRadius: '9999px',
                       transition: 'width 0.8s ease'
                     }}

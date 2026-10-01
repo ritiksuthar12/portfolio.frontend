@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, Lock, LogOut, Plus, Shield, Menu, X, ChevronRight } from 'lucide-react';
+import { ArrowUpRight, Lock, LogOut, Plus, Shield, Menu, X, ChevronRight, Download } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
+import { api } from '../services/api';
 
 export default function Navbar({ onOpenAdmin, isAdmin, onLogout, onOpenAddProject, onOpenAddSkill }) {
   const [scrolled, setScrolled] = useState(false);
@@ -48,18 +50,7 @@ export default function Navbar({ onOpenAdmin, isAdmin, onLogout, onOpenAddProjec
   };
 
   return (
-    <header
-      className={`site-header ${scrolled ? 'scrolled' : ''}`}
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 60,
-        backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.95)' : '#ffffff',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--border-light)' : '1px solid transparent',
-        transition: 'all 0.3s ease'
-      }}
-    >
+    <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
         {/* Brand Logo */}
         <a
@@ -142,6 +133,18 @@ export default function Navbar({ onOpenAdmin, isAdmin, onLogout, onOpenAddProjec
                 Contact
               </a>
             </li>
+            <li>
+              <a
+                href={api.getResumeDownloadUrl()}
+                download="Ritik_Suthar_Resume.pdf"
+                className="nav-link nav-resume-link"
+                title="Download Ritik's Resume (PDF)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Resume
+              </a>
+            </li>
           </ul>
         </nav>
 
@@ -193,6 +196,9 @@ export default function Navbar({ onOpenAdmin, isAdmin, onLogout, onOpenAddProjec
               <Lock size={15} />
             </button>
           )}
+
+          {/* Dark / Light Mode Switcher */}
+          <ThemeToggle />
 
           <a
             href="#contact"
@@ -290,7 +296,23 @@ export default function Navbar({ onOpenAdmin, isAdmin, onLogout, onOpenAddProjec
                 <span>Contact</span>
                 <ChevronRight size={16} />
               </a>
+              <a
+                href={api.getResumeDownloadUrl()}
+                download="Ritik_Suthar_Resume.pdf"
+                className="mobile-nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Download size={16} /> Download Resume
+                </span>
+                <ChevronRight size={16} />
+              </a>
             </nav>
+
+            {/* Mobile Drawer Theme Switcher */}
+            <ThemeToggle variant="drawer" />
 
             <div className="mobile-drawer-footer">
               <a

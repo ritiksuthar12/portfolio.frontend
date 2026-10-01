@@ -53,7 +53,7 @@ export default function AboutSection() {
         <div className="about-features-col">
           <div className="about-feature-card">
             <div className="about-feature-icon">
-              <Terminal size={22} color="#111827" />
+              <Terminal size={22} color="currentColor" />
             </div>
             <div className="about-feature-content">
               <h4>Full Stack Development</h4>
@@ -65,7 +65,7 @@ export default function AboutSection() {
 
           <div className="about-feature-card">
             <div className="about-feature-icon">
-              <Brain size={22} color="#111827" />
+              <Brain size={22} color="currentColor" />
             </div>
             <div className="about-feature-content">
               <h4>System Performance & Architecture</h4>
@@ -77,7 +77,7 @@ export default function AboutSection() {
 
           <div className="about-feature-card">
             <div className="about-feature-icon">
-              <Sparkles size={22} color="#111827" />
+              <Sparkles size={22} color="currentColor" />
             </div>
             <div className="about-feature-content">
               <h4>Continuous Growth & Innovation</h4>

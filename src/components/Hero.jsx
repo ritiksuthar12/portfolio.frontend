@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Download, Mail } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, InstagramIcon } from './TechIcons';
+import { api } from '../services/api';
 
 export default function Hero({ onExploreProjects }) {
   const [isColor, setIsColor] = useState(false);
@@ -10,6 +11,16 @@ export default function Hero({ onExploreProjects }) {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleDownload = async (e) => {
+    try {
+      const meta = await api.getResume();
+      if (meta && meta.customUrl && !meta.filePath) {
+        e.preventDefault();
+        window.open(meta.customUrl, '_blank', 'noopener,noreferrer');
+      }
+    } catch {}
   };
 
   return (
@@ -27,6 +38,7 @@ export default function Hero({ onExploreProjects }) {
           <span className="subtitle-divider">|</span>
           <span>REST APIs</span>
         </div>
+
         <p className="hero-desc">
           Full Stack Developer specializing in React, Node.js, Express, and MongoDB.
           I engineer modern, performant web applications with clean code architecture and seamless user experiences.
@@ -42,15 +54,16 @@ export default function Hero({ onExploreProjects }) {
             <span>View My Work</span> <ArrowRight size={17} />
           </button>
           <a
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollTo('contact');
-            }}
+            href={api.getResumeDownloadUrl()}
+            download="Ritik_Suthar_Resume.pdf"
+            onClick={handleDownload}
             className="btn-outline hero-btn"
-            aria-label="Request Ritik Suthar's resume via contact form"
+            aria-label="Download Ritik Suthar's resume"
+            title="Download Ritik Suthar's Resume (PDF)"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <span>Get Resume / Contact</span> <Download size={16} />
+            <span>Download Resume</span> <Download size={16} />
           </a>
         </div>
 
@@ -113,7 +126,7 @@ export default function Hero({ onExploreProjects }) {
             {/* Main elliptical orbital sketch line */}
             <path
               d="M 50 300 C 50 160, 220 70, 410 110 C 470 125, 480 230, 410 270 C 310 320, 110 360, 80 290 C 60 240, 140 170, 260 140 C 370 115, 440 170, 420 250"
-              stroke="#111827"
+              stroke="var(--doodle-stroke, currentColor)"
               strokeWidth="2.8"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -122,13 +135,13 @@ export default function Hero({ onExploreProjects }) {
             {/* Subtle accent burst lines top left */}
             <path
               d="M 120 120 L 140 145"
-              stroke="#111827"
+              stroke="var(--doodle-stroke, currentColor)"
               strokeWidth="2.6"
               strokeLinecap="round"
             />
             <path
               d="M 105 135 L 118 152"
-              stroke="#111827"
+              stroke="var(--doodle-stroke, currentColor)"
               strokeWidth="2.6"
               strokeLinecap="round"
             />

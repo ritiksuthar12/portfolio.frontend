@@ -318,5 +318,123 @@ export const api = {
   logout() {
     localStorage.removeItem('ritik_portfolio_token');
     localStorage.removeItem('ritik_portfolio_user');
+  },
+
+  // Resume APIs
+  getResumeDownloadUrl() {
+    return `${API_BASE}/resume/download`;
+  },
+
+  getResumeViewUrl() {
+    return `${API_BASE}/resume/view`;
+  },
+
+  async getResume() {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/resume`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data) {
+          localStorage.setItem('ritik_cached_resume', JSON.stringify(json.data));
+          return json.data;
+        }
+      }
+    } catch {
+      // Offline fallback
+    }
+
+    const cached = localStorage.getItem('ritik_cached_resume');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {}
+    }
+
+    return {
+      fileName: 'Ritik_Suthar_Resume.pdf',
+      fileUrl: '/resume.pdf',
+      fileSize: 1540,
+      mimeType: 'application/pdf',
+      uploadedAt: new Date().toISOString(),
+      hasResume: true
+    };
+  },
+
+  async uploadResume(file) {
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    const token = localStorage.getItem('ritik_portfolio_token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+    try {
+      const res = await fetch(`${API_BASE}/resume/upload`, {
+        method: 'POST',
+        headers,
+        body: formData
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Upload failed');
+      if (data.data) {
+        localStorage.setItem('ritik_cached_resume', JSON.stringify(data.data));
+      }
+      return data;
+    } catch (err) {
+      if (token === 'offline-token-demo') {
+        const mockResume = {
+          fileName: file.name,
+          fileSize: file.size,
+          fileUrl: URL.createObjectURL(file),
+          mimeType: file.type || 'application/pdf',
+          uploadedAt: new Date().toISOString(),
+          hasResume: true
+        };
+        localStorage.setItem('ritik_cached_resume', JSON.stringify(mockResume));
+        return { success: true, message: 'Resume uploaded (offline preview)', data: mockResume };
+      }
+      throw err;
+    }
+  },
+
+  async updateResumeUrl(customUrl, fileName) {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/resume/url`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ customUrl, fileName })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to update link');
+      if (data.data) {
+        localStorage.setItem('ritik_cached_resume', JSON.stringify(data.data));
+      }
+      return data;
+    } catch (err) {
+      const mockResume = {
+        fileName: fileName || 'Ritik_Suthar_Resume.pdf',
+        fileUrl: customUrl,
+        customUrl,
+        fileSize: 0,
+        uploadedAt: new Date().toISOString(),
+        hasResume: true
+      };
+      localStorage.setItem('ritik_cached_resume', JSON.stringify(mockResume));
+      return { success: true, message: 'Link updated (offline fallback)', data: mockResume };
+    }
+  },
+
+  async deleteResume() {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/resume`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        localStorage.removeItem('ritik_cached_resume');
+        return await res.json();
+      }
+    } catch {}
+    localStorage.removeItem('ritik_cached_resume');
+    return { success: true };
   }
 };

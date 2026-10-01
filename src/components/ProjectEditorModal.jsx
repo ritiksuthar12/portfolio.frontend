@@ -87,12 +87,12 @@ export default function ProjectEditorModal({
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#111827' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-primary)' }}>
             {project ? 'Edit Project' : 'Add New Project'}
           </h2>
           <button
             onClick={onClose}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
           >
             <X size={20} />
           </button>
@@ -149,7 +149,7 @@ export default function ProjectEditorModal({
             <div className="form-group">
               <label className="form-label">
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <GithubIcon size={14} color="#111827" /> GitHub Repository URL (Optional)
+                  <GithubIcon size={14} color="currentColor" /> GitHub Repository URL (Optional)
                 </span>
               </label>
               <input
@@ -204,9 +204,9 @@ export default function ProjectEditorModal({
                 id="featuredCheck"
                 checked={formData.featured}
                 onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                style={{ width: '16px', height: '16px', accentColor: '#111827', cursor: 'pointer' }}
+                style={{ width: '16px', height: '16px', accentColor: 'var(--primary-btn-bg)', cursor: 'pointer' }}
               />
-              <label htmlFor="featuredCheck" style={{ fontSize: '0.85rem', fontWeight: '600', color: '#111827', cursor: 'pointer' }}>
+              <label htmlFor="featuredCheck" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-primary)', cursor: 'pointer' }}>
                 Show on Featured Projects ribbon (Home page)
               </label>
             </div>

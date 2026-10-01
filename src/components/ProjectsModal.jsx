@@ -39,10 +39,10 @@ export default function ProjectsModal({
       >
         <div className="modal-header">
           <div>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#111827' }}>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)' }}>
               All Projects ({projects.length})
             </h2>
-            <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
               Explore my deployed web applications, APIs, and systems.
             </p>
           </div>
@@ -84,9 +84,9 @@ export default function ProjectsModal({
                   fontSize: '0.8rem',
                   borderRadius: '9999px',
                   border: '1px solid',
-                  borderColor: selectedCategory === cat ? '#111827' : 'var(--border-light)',
-                  backgroundColor: selectedCategory === cat ? '#111827' : '#ffffff',
-                  color: selectedCategory === cat ? '#ffffff' : '#4b5563',
+                  borderColor: selectedCategory === cat ? 'var(--primary-btn-bg)' : 'var(--border-light)',
+                  backgroundColor: selectedCategory === cat ? 'var(--primary-btn-bg)' : 'var(--bg-card)',
+                  color: selectedCategory === cat ? 'var(--primary-btn-text)' : 'var(--text-secondary)',
                   cursor: 'pointer',
                   fontWeight: '600',
                   transition: 'all 0.2s'
@@ -114,7 +114,7 @@ export default function ProjectsModal({
         <div className="modal-body">
           <div className="modal-projects-grid">
             {filtered.length === 0 ? (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem 1rem', color: '#6b7280' }}>
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
                 No projects found matching your criteria.
               </div>
             ) : (
@@ -130,14 +130,14 @@ export default function ProjectsModal({
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--bg-card)',
                     transition: 'all 0.2s ease',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+                    boxShadow: 'var(--shadow-card)'
                   }}
                 >
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: '#6b7280', letterSpacing: '0.05em' }}>
+                      <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
                         {proj.category || 'Web'}
                       </span>
                       {proj.featured && (
@@ -147,10 +147,10 @@ export default function ProjectsModal({
                       )}
                     </div>
 
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#111827', marginBottom: '0.4rem' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
                       {proj.title}
                     </h3>
-                    <p style={{ fontSize: '0.85rem', color: '#4b5563', lineHeight: '1.45', marginBottom: '1rem' }}>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '1rem' }}>
                       {proj.description}
                     </p>
                   </div>
@@ -184,7 +184,7 @@ export default function ProjectsModal({
                           style={{ padding: '0.4rem 0.65rem' }}
                           title="View Code on GitHub"
                         >
-                          <GithubIcon size={15} color="#111827" />
+                          <GithubIcon size={15} color="currentColor" />
                         </a>
                       )}
 
