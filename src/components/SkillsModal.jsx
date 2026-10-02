@@ -91,69 +91,75 @@ export default function SkillsModal({
         {/* Skills Grid */}
         <div className="modal-body">
           <div className="modal-skills-grid">
-          {filtered.map((skill) => {
-            const id = skill.id || skill._id;
-            return (
-              <div
-                key={id}
-                style={{
-                  border: '1px solid var(--border-light)',
-                  borderRadius: '0.875rem',
-                  padding: '1rem',
-                  backgroundColor: 'var(--bg-card)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.65rem'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                    <div className="tech-icon-wrap" style={{ width: '28px', height: '28px' }}>
-                      {renderTechIcon(skill.icon || skill.name)}
+          {filtered.length === 0 ? (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
+              No skills found matching this criteria.
+            </div>
+          ) : (
+            filtered.map((skill) => {
+              const id = skill.id || skill._id;
+              return (
+                <div
+                  key={id}
+                  style={{
+                    border: '1px solid var(--border-light)',
+                    borderRadius: '0.875rem',
+                    padding: '1rem',
+                    backgroundColor: 'var(--bg-card)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.65rem'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                      <div className="tech-icon-wrap" style={{ width: '28px', height: '28px' }}>
+                        {renderTechIcon(skill.icon || skill.name)}
+                      </div>
+                      <span style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                        {skill.name}
+                      </span>
                     </div>
-                    <span style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                      {skill.name}
-                    </span>
+
+                    {isAdmin && (
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <button
+                          onClick={() => onEditSkill(skill)}
+                          style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => onDeleteSkill(id, skill.name)}
+                          style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444' }}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
-                  {isAdmin && (
-                    <div style={{ display: 'flex', gap: '4px' }}>
-                      <button
-                        onClick={() => onEditSkill(skill)}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
-                      >
-                        <Edit2 size={13} />
-                      </button>
-                      <button
-                        onClick={() => onDeleteSkill(id, skill.name)}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444' }}
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <span>{skill.category}</span>
+                    <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{skill.proficiency || 85}%</span>
+                  </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  <span>{skill.category}</span>
-                  <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{skill.proficiency || 85}%</span>
+                  {/* Progress bar */}
+                  <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-subtle)', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: `${skill.proficiency || 85}%`,
+                        height: '100%',
+                        backgroundColor: 'var(--primary-btn-bg)',
+                        borderRadius: '9999px',
+                        transition: 'width 0.8s ease'
+                      }}
+                    />
+                  </div>
                 </div>
-
-                {/* Progress bar */}
-                <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-subtle)', borderRadius: '9999px', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      width: `${skill.proficiency || 85}%`,
-                      height: '100%',
-                      backgroundColor: 'var(--primary-btn-bg)',
-                      borderRadius: '9999px',
-                      transition: 'width 0.8s ease'
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
           </div>
         </div>
       </div>

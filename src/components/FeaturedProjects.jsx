@@ -34,14 +34,35 @@ export default function FeaturedProjects({
         </div>
       </div>
 
-      <div className="projects-mini-row">
-        {displayList.map((project) => {
-          const id = project.id || project._id;
-          return (
-            <div
-              key={id}
-              className="project-card"
+      {displayList.length === 0 ? (
+        <div style={{
+          padding: '2.5rem 1.5rem',
+          textAlign: 'center',
+          backgroundColor: 'var(--bg-card)',
+          borderRadius: '1rem',
+          border: '1px dashed var(--border-light)',
+          color: 'var(--text-muted)'
+        }}>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.9rem' }}>No projects in the database yet.</p>
+          {isAdmin && (
+            <button
+              onClick={onAddProject}
+              className="btn-primary"
+              style={{ fontSize: '0.8rem', padding: '0.4rem 0.9rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
             >
+              <Plus size={14} /> Add First Project
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="projects-mini-row">
+          {displayList.map((project) => {
+            const id = project.id || project._id;
+            return (
+              <div
+                key={id}
+                className="project-card"
+              >
               <div>
                 <div className="project-card-header">
                   <h3 className="project-card-title">{project.title}</h3>
@@ -114,7 +135,8 @@ export default function FeaturedProjects({
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

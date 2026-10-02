@@ -34,57 +34,79 @@ export default function TechStack({
         </div>
       </div>
 
-      <div className="tech-badges-grid">
-        {displaySkills.map((skill) => {
-          const id = skill.id || skill._id;
-          return (
-            <div key={id} className="tech-badge-card" style={{ position: 'relative' }}>
-              <div className="tech-icon-wrap" aria-hidden="true">
-                {renderTechIcon(skill.icon || skill.name)}
-              </div>
-              <div style={{ overflow: 'hidden', flexGrow: 1 }}>
-                <div className="tech-badge-name" title={skill.name}>
-                  {skill.name}
+      {displaySkills.length === 0 ? (
+        <div style={{
+          padding: '2.5rem 1.5rem',
+          textAlign: 'center',
+          backgroundColor: 'var(--bg-card)',
+          borderRadius: '1rem',
+          border: '1px dashed var(--border-light)',
+          color: 'var(--text-muted)'
+        }}>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.9rem' }}>No skills in the database yet.</p>
+          {isAdmin && (
+            <button
+              onClick={onAddSkill}
+              className="btn-primary"
+              style={{ fontSize: '0.8rem', padding: '0.4rem 0.9rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+            >
+              <Plus size={14} /> Add First Skill
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="tech-badges-grid">
+          {displaySkills.map((skill) => {
+            const id = skill.id || skill._id;
+            return (
+              <div key={id} className="tech-badge-card" style={{ position: 'relative' }}>
+                <div className="tech-icon-wrap" aria-hidden="true">
+                  {renderTechIcon(skill.icon || skill.name)}
                 </div>
-              </div>
+                <div style={{ overflow: 'hidden', flexGrow: 1 }}>
+                  <div className="tech-badge-name" title={skill.name}>
+                    {skill.name}
+                  </div>
+                </div>
 
-              {/* Admin controls for skill */}
-              {isAdmin && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto' }}>
-                  <button
-                    onClick={() => onEditSkill(skill)}
-                    style={{
-                      border: 'none',
-                      background: 'none',
-                      cursor: 'pointer',
-                      color: '#6b7280',
-                      padding: '2px'
-                    }}
-                    title="Edit skill"
-                    aria-label={`Edit skill ${skill.name}`}
-                  >
-                    <Edit2 size={13} />
-                  </button>
-                  <button
-                    onClick={() => onDeleteSkill(id, skill.name)}
-                    style={{
-                      border: 'none',
-                      background: 'none',
-                      cursor: 'pointer',
-                      color: '#ef4444',
-                      padding: '2px'
-                    }}
-                    title="Delete skill"
-                    aria-label={`Delete skill ${skill.name}`}
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                {/* Admin controls for skill */}
+                {isAdmin && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto' }}>
+                    <button
+                      onClick={() => onEditSkill(skill)}
+                      style={{
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        color: '#6b7280',
+                        padding: '2px'
+                      }}
+                      title="Edit skill"
+                      aria-label={`Edit skill ${skill.name}`}
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
+                      onClick={() => onDeleteSkill(id, skill.name)}
+                      style={{
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        color: '#ef4444',
+                        padding: '2px'
+                      }}
+                      title="Delete skill"
+                      aria-label={`Delete skill ${skill.name}`}
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

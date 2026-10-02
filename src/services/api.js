@@ -1,5 +1,3 @@
-import { defaultProjects, defaultSkills } from '../data/defaultPortfolioData';
-
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const getAuthHeaders = () => {
@@ -31,13 +29,13 @@ export const api = {
       const res = await fetchWithTimeout(`${API_BASE}/projects`);
       if (res.ok) {
         const data = await res.json();
-        if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+        if (data.data && Array.isArray(data.data)) {
           localStorage.setItem('ritik_cached_projects', JSON.stringify(data.data));
           return data.data;
         }
       }
     } catch {
-      // Backend not running or timeout -> graceful offline fallback
+      // Backend not running or timeout -> offline fallback
     }
 
     const cached = localStorage.getItem('ritik_cached_projects');
@@ -45,10 +43,10 @@ export const api = {
       try {
         return JSON.parse(cached);
       } catch {
-        // invalid cache, fallback to defaults
+        // invalid cache
       }
     }
-    return defaultProjects;
+    return [];
   },
 
   async createProject(projectData) {
@@ -59,22 +57,30 @@ export const api = {
         body: JSON.stringify(projectData)
       });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.data) {
+        const current = await this.getProjects();
+        const updated = [data.data, ...current.filter((p) => (p.id || p._id) !== (data.data.id || data.data._id))];
+        localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
         return data.data;
       }
-    } catch {
-      // Offline fallback
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to create project');
+      }
+    } catch (err) {
+      const token = localStorage.getItem('ritik_portfolio_token');
+      if (token === 'offline-token-demo') {
+        const newProject = {
+          ...projectData,
+          id: `proj-${Date.now()}`,
+          createdAt: new Date().toISOString()
+        };
+        const current = await this.getProjects();
+        const updated = [newProject, ...current];
+        localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
+        return newProject;
+      }
+      throw err;
     }
-
-    const newProject = {
-      ...projectData,
-      id: `proj-${Date.now()}`,
-      createdAt: new Date().toISOString()
-    };
-    const current = await this.getProjects();
-    const updated = [newProject, ...current];
-    localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
-    return newProject;
   },
 
   async updateProject(id, projectData) {
@@ -85,17 +91,25 @@ export const api = {
         body: JSON.stringify(projectData)
       });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.data) {
+        const current = await this.getProjects();
+        const updated = current.map((p) => ((p.id || p._id) === id ? data.data : p));
+        localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
         return data.data;
       }
-    } catch {
-      // Offline fallback
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update project');
+      }
+    } catch (err) {
+      const token = localStorage.getItem('ritik_portfolio_token');
+      if (token === 'offline-token-demo') {
+        const current = await this.getProjects();
+        const updated = current.map((p) => ((p.id || p._id) === id ? { ...p, ...projectData } : p));
+        localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
+        return { ...projectData, id };
+      }
+      throw err;
     }
-
-    const current = await this.getProjects();
-    const updated = current.map((p) => ((p.id || p._id) === id ? { ...p, ...projectData } : p));
-    localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
-    return { ...projectData, id };
   },
 
   async deleteProject(id) {
@@ -105,16 +119,29 @@ export const api = {
         headers: getAuthHeaders()
       });
       if (res.ok) {
-        return await res.json();
+        const result = await res.json();
+        const cached = localStorage.getItem('ritik_cached_projects');
+        if (cached) {
+          try {
+            const list = JSON.parse(cached);
+            const updated = list.filter((p) => (p.id || p._id) !== id);
+            localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
+          } catch {}
+        }
+        return result;
       }
-    } catch {
-      // Offline fallback
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.message || 'Failed to delete project');
+    } catch (err) {
+      const token = localStorage.getItem('ritik_portfolio_token');
+      if (token === 'offline-token-demo') {
+        const current = await this.getProjects();
+        const updated = current.filter((p) => (p.id || p._id) !== id);
+        localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
+        return { success: true };
+      }
+      throw err;
     }
-
-    const current = await this.getProjects();
-    const updated = current.filter((p) => (p.id || p._id) !== id);
-    localStorage.setItem('ritik_cached_projects', JSON.stringify(updated));
-    return { success: true };
   },
 
   // Skills
@@ -123,7 +150,7 @@ export const api = {
       const res = await fetchWithTimeout(`${API_BASE}/skills`);
       if (res.ok) {
         const data = await res.json();
-        if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+        if (data.data && Array.isArray(data.data)) {
           localStorage.setItem('ritik_cached_skills', JSON.stringify(data.data));
           return data.data;
         }
@@ -137,10 +164,10 @@ export const api = {
       try {
         return JSON.parse(cached);
       } catch {
-        // invalid cache, fallback to defaults
+        // invalid cache
       }
     }
-    return defaultSkills;
+    return [];
   },
 
   async createSkill(skillData) {
@@ -151,21 +178,29 @@ export const api = {
         body: JSON.stringify(skillData)
       });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.data) {
+        const current = await this.getSkills();
+        const updated = [...current.filter((s) => (s.id || s._id) !== (data.data.id || data.data._id)), data.data];
+        localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
         return data.data;
       }
-    } catch {
-      // Offline fallback
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to create skill');
+      }
+    } catch (err) {
+      const token = localStorage.getItem('ritik_portfolio_token');
+      if (token === 'offline-token-demo') {
+        const newSkill = {
+          ...skillData,
+          id: `skill-${Date.now()}`
+        };
+        const current = await this.getSkills();
+        const updated = [...current, newSkill];
+        localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
+        return newSkill;
+      }
+      throw err;
     }
-
-    const newSkill = {
-      ...skillData,
-      id: `skill-${Date.now()}`
-    };
-    const current = await this.getSkills();
-    const updated = [...current, newSkill];
-    localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
-    return newSkill;
   },
 
   async updateSkill(id, skillData) {
@@ -176,17 +211,25 @@ export const api = {
         body: JSON.stringify(skillData)
       });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.data) {
+        const current = await this.getSkills();
+        const updated = current.map((s) => ((s.id || s._id) === id ? data.data : s));
+        localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
         return data.data;
       }
-    } catch {
-      // Offline fallback
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update skill');
+      }
+    } catch (err) {
+      const token = localStorage.getItem('ritik_portfolio_token');
+      if (token === 'offline-token-demo') {
+        const current = await this.getSkills();
+        const updated = current.map((s) => ((s.id || s._id) === id ? { ...s, ...skillData } : s));
+        localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
+        return { ...skillData, id };
+      }
+      throw err;
     }
-
-    const current = await this.getSkills();
-    const updated = current.map((s) => ((s.id || s._id) === id ? { ...s, ...skillData } : s));
-    localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
-    return { ...skillData, id };
   },
 
   async deleteSkill(id) {
@@ -196,16 +239,29 @@ export const api = {
         headers: getAuthHeaders()
       });
       if (res.ok) {
-        return await res.json();
+        const result = await res.json();
+        const cached = localStorage.getItem('ritik_cached_skills');
+        if (cached) {
+          try {
+            const list = JSON.parse(cached);
+            const updated = list.filter((s) => (s.id || s._id) !== id);
+            localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
+          } catch {}
+        }
+        return result;
       }
-    } catch {
-      // Offline fallback
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.message || 'Failed to delete skill');
+    } catch (err) {
+      const token = localStorage.getItem('ritik_portfolio_token');
+      if (token === 'offline-token-demo') {
+        const current = await this.getSkills();
+        const updated = current.filter((s) => (s.id || s._id) !== id);
+        localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
+        return { success: true };
+      }
+      throw err;
     }
-
-    const current = await this.getSkills();
-    const updated = current.filter((s) => (s.id || s._id) !== id);
-    localStorage.setItem('ritik_cached_skills', JSON.stringify(updated));
-    return { success: true };
   },
 
   // Contact

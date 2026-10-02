@@ -23,8 +23,7 @@
       (function() {
         try {
           var stored = localStorage.getItem('theme');
-          var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var theme = stored === 'dark' || stored === 'light' ? stored : (systemDark ? 'dark' : 'light');
+          var theme = stored === 'dark' ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', theme);
           if (theme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -127,9 +126,9 @@
           "image": "https://portfolio-ritik-live.vercel.app/ritik.png",
           "email": "mailto:ritiksuthar989@gmail.com",
           "sameAs": [
-            "https://github.com/ritiksuthar",
-            "https://linkedin.com/in/ritiksuthar",
-            "https://instagram.com/ritiksuthar"
+            "https://github.com/ritiksuthar12",
+            "https://www.linkedin.com/in/ritik-suthar/",
+            "https://www.instagram.com/rit_iksuthar/"
           ],
           "knowsAbout": [
             "JavaScript",
@@ -179,8 +178,9 @@
         <h2>Contact Information</h2>
         <p>Email: <a href="mailto:ritiksuthar989@gmail.com">ritiksuthar989@gmail.com</a></p>
         <p>
-          GitHub: <a href="https://github.com/ritiksuthar">github.com/ritiksuthar</a> | 
-          LinkedIn: <a href="https://linkedin.com/in/ritiksuthar">linkedin.com/in/ritiksuthar</a>
+          GitHub: <a href="https://github.com/ritiksuthar12">github.com/ritiksuthar12</a> | 
+          LinkedIn: <a href="https://www.linkedin.com/in/ritik-suthar/">linkedin.com/in/ritik-suthar</a> | 
+          Instagram: <a href="https://www.instagram.com/rit_iksuthar/">instagram.com/rit_iksuthar</a>
         </p>
       </div>
     </noscript>

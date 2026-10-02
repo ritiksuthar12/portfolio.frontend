@@ -13,13 +13,10 @@ export function ThemeProvider({ children }) {
     // 1. Check local storage
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('theme');
-      if (stored === 'dark' || stored === 'light') {
-        return stored;
-      }
-      // 2. Check system preference
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      if (stored === 'dark') {
         return 'dark';
       }
+      return 'light';
     }
     return 'light';
   });
@@ -51,22 +48,6 @@ export function ThemeProvider({ children }) {
       // LocalStorage access might fail in private browsing mode
     }
   }, [theme]);
-
-  // Listen to OS system color scheme changes if user changes OS appearance
-  useEffect(() => {
-    if (!window.matchMedia) return;
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e) => {
-      const stored = localStorage.getItem('theme');
-      // If user hasn't explicitly set a preference, follow system
-      if (!stored) {
-        setThemeState(e.matches ? 'dark' : 'light');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
 
   const toggleTheme = () => {
     setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'));

@@ -10,7 +10,6 @@ import Footer from './components/Footer';
 import Toast from './components/Toast';
 import { useSEO } from './components/SEO';
 import { api } from './services/api';
-import { defaultProjects, defaultSkills } from './data/defaultPortfolioData';
 import { ShieldCheck, Plus, LogOut } from 'lucide-react';
 
 // Code-split heavy modals to minimize initial JS bundle size and maximize Core Web Vitals (LCP/TBT)
@@ -21,9 +20,22 @@ const ProjectEditorModal = lazy(() => import('./components/ProjectEditorModal'))
 const SkillEditorModal = lazy(() => import('./components/SkillEditorModal'));
 
 export default function App() {
-  // Pre-seed with default portfolio data for instant first-paint crawlability and zero-CLS
-  const [projects, setProjects] = useState(defaultProjects);
-  const [skills, setSkills] = useState(defaultSkills);
+  // Only display projects and skills stored in the database / verified cache
+  const [projects, setProjects] = useState(() => {
+    try {
+      const cached = localStorage.getItem('ritik_cached_projects');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [skills, setSkills] = useState(() => {
+    try {
+      const cached = localStorage.getItem('ritik_cached_skills');
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  const [loading, setLoading] = useState(true);
 
   // Authentication State
   const [isAdmin, setIsAdmin] = useState(false);
@@ -68,21 +80,21 @@ export default function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Load latest data from API or offline cache
+  // Load latest data from Database API
   const loadData = useCallback(async () => {
     try {
       const [projData, skillData] = await Promise.all([
         api.getProjects(),
         api.getSkills()
       ]);
-      if (projData && Array.isArray(projData) && projData.length > 0) {
+      if (Array.isArray(projData)) {
         setProjects(projData);
       }
-      if (skillData && Array.isArray(skillData) && skillData.length > 0) {
+      if (Array.isArray(skillData)) {
         setSkills(skillData);
       }
     } catch (err) {
-      console.warn('Portfolio data loaded via default snapshot fallback:', err);
+      console.warn('Portfolio data load error:', err);
     } finally {
       setLoading(false);
     }

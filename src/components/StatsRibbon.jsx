@@ -11,7 +11,7 @@ export default function StatsRibbon({ projectsCount = 10 }) {
             <Code2 size={24} />
           </div>
           <div>
-            <div className="stat-title">{projectsCount > 10 ? `${projectsCount}+` : '10+'}</div>
+            <div className="stat-title">{projectsCount >= 10 ? `${projectsCount}+` : `${projectsCount}`}</div>
             <div className="stat-desc">Projects Built</div>
           </div>
         </div>

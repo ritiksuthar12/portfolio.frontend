@@ -445,59 +445,65 @@ export default function AdminModal({
                     </button>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {projects.map((proj) => {
-                      const id = proj.id || proj._id;
-                      return (
-                        <div
-                          key={id}
-                          className="admin-list-item"
-                        >
-                          <div className="admin-list-item-content">
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)' }}>
-                                {proj.title}
-                              </h4>
-                              {proj.featured && (
-                                <span style={{ fontSize: '0.65rem', background: '#e0f2fe', color: '#0369a1', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
-                                  FEATURED
-                                </span>
-                              )}
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>• {proj.category}</span>
+                  {projects.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)', backgroundColor: 'var(--bg-card)', borderRadius: '0.75rem', border: '1px dashed var(--border-light)' }}>
+                      No projects currently stored in the database. Click "+ Add Project" above to create one.
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {projects.map((proj) => {
+                        const id = proj.id || proj._id;
+                        return (
+                          <div
+                            key={id}
+                            className="admin-list-item"
+                          >
+                            <div className="admin-list-item-content">
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                                  {proj.title}
+                                </h4>
+                                {proj.featured && (
+                                  <span style={{ fontSize: '0.65rem', background: '#e0f2fe', color: '#0369a1', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
+                                    FEATURED
+                                  </span>
+                                )}
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>• {proj.category}</span>
+                              </div>
+                              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                                {proj.description}
+                              </p>
+                              <a
+                                href={proj.deployedUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{ fontSize: '0.75rem', color: '#2563eb', display: 'inline-flex', alignItems: 'center', gap: '3px', textDecoration: 'none', marginTop: '2px', wordBreak: 'break-all' }}
+                              >
+                                {proj.deployedUrl} <ExternalLink size={11} />
+                              </a>
                             </div>
-                            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                              {proj.description}
-                            </p>
-                            <a
-                              href={proj.deployedUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              style={{ fontSize: '0.75rem', color: '#2563eb', display: 'inline-flex', alignItems: 'center', gap: '3px', textDecoration: 'none', marginTop: '2px', wordBreak: 'break-all' }}
-                            >
-                              {proj.deployedUrl} <ExternalLink size={11} />
-                            </a>
-                          </div>
 
-                          <div className="admin-list-item-actions">
-                            <button
-                              onClick={() => onEditProject(proj)}
-                              className="action-btn-sm edit"
-                              style={{ padding: '0.35rem 0.65rem' }}
-                            >
-                              <Edit size={13} /> Edit
-                            </button>
-                            <button
-                              onClick={() => onDeleteProject(id, proj.title)}
-                              className="action-btn-sm delete"
-                              style={{ padding: '0.35rem 0.65rem' }}
-                            >
-                              <Trash2 size={13} /> Delete
-                            </button>
+                            <div className="admin-list-item-actions">
+                              <button
+                                onClick={() => onEditProject(proj)}
+                                className="action-btn-sm edit"
+                                style={{ padding: '0.35rem 0.65rem' }}
+                              >
+                                <Edit size={13} /> Edit
+                              </button>
+                              <button
+                                onClick={() => onDeleteProject(id, proj.title)}
+                                className="action-btn-sm delete"
+                                style={{ padding: '0.35rem 0.65rem' }}
+                              >
+                                <Trash2 size={13} /> Delete
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -517,51 +523,57 @@ export default function AdminModal({
                     </button>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem' }}>
-                    {skills.map((skill) => {
-                      const id = skill.id || skill._id;
-                      return (
-                        <div
-                          key={id}
-                          style={{
-                            border: '1px solid var(--border-light)',
-                            borderRadius: '0.75rem',
-                            padding: '0.75rem 1rem',
-                            backgroundColor: 'var(--bg-card)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between'
-                          }}
-                        >
-                          <div>
-                            <div style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                              {skill.name}
+                  {skills.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)', backgroundColor: 'var(--bg-card)', borderRadius: '0.75rem', border: '1px dashed var(--border-light)' }}>
+                      No skills currently stored in the database. Click "+ Add Skill" above to add one.
+                    </div>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem' }}>
+                      {skills.map((skill) => {
+                        const id = skill.id || skill._id;
+                        return (
+                          <div
+                            key={id}
+                            style={{
+                              border: '1px solid var(--border-light)',
+                              borderRadius: '0.75rem',
+                              padding: '0.75rem 1rem',
+                              backgroundColor: 'var(--bg-card)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between'
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                                {skill.name}
+                              </div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                {skill.category} • {skill.proficiency || 85}%
+                              </div>
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                              {skill.category} • {skill.proficiency || 85}%
-                            </div>
-                          </div>
 
-                          <div style={{ display: 'flex', gap: '0.35rem' }}>
-                            <button
-                              onClick={() => onEditSkill(skill)}
-                              className="action-btn-sm edit"
-                              style={{ padding: '0.3rem 0.5rem' }}
-                            >
-                              <Edit size={12} />
-                            </button>
-                            <button
-                              onClick={() => onDeleteSkill(id, skill.name)}
-                              className="action-btn-sm delete"
-                              style={{ padding: '0.3rem 0.5rem' }}
-                            >
-                              <Trash2 size={12} />
-                            </button>
+                            <div style={{ display: 'flex', gap: '0.35rem' }}>
+                              <button
+                                onClick={() => onEditSkill(skill)}
+                                className="action-btn-sm edit"
+                                style={{ padding: '0.3rem 0.5rem' }}
+                              >
+                                <Edit size={12} />
+                              </button>
+                              <button
+                                onClick={() => onDeleteSkill(id, skill.name)}
+                                className="action-btn-sm delete"
+                                style={{ padding: '0.3rem 0.5rem' }}
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 

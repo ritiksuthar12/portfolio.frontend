@@ -154,7 +154,7 @@ export default function ProjectEditorModal({
               </label>
               <input
                 type="url"
-                placeholder="https://github.com/ritiksuthar/my-repo"
+                placeholder="https://github.com/ritiksuthar12/my-repo"
                 className="form-input"
                 value={formData.githubUrl}
                 onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}

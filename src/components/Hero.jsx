@@ -70,7 +70,7 @@ export default function Hero({ onExploreProjects }) {
         {/* Social Links */}
         <div className="hero-socials">
           <a
-            href="https://github.com/ritiksuthar"
+            href="https://github.com/ritiksuthar12"
             target="_blank"
             rel="noopener noreferrer"
             className="social-btn"
@@ -80,7 +80,7 @@ export default function Hero({ onExploreProjects }) {
             <GithubIcon size={18} />
           </a>
           <a
-            href="https://linkedin.com/in/ritiksuthar"
+            href="https://www.linkedin.com/in/ritik-suthar/"
             target="_blank"
             rel="noopener noreferrer"
             className="social-btn"
@@ -90,7 +90,7 @@ export default function Hero({ onExploreProjects }) {
             <LinkedinIcon size={18} />
           </a>
           <a
-            href="https://instagram.com/ritiksuthar"
+            href="https://www.instagram.com/rit_iksuthar/"
             target="_blank"
             rel="noopener noreferrer"
             className="social-btn"
