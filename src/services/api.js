@@ -1,20 +1,27 @@
 export const getApiBase = () => {
-  const envUrl = import.meta.env.VITE_API_URL;
+  const envUrl = (import.meta.env.VITE_API_URL || '').trim();
   if (typeof window !== 'undefined') {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     // When running in production (e.g. Vercel deployment, custom domain)
     if (!isLocal) {
-      // If user explicitly configured an external HTTPS API url (e.g. on Render)
-      if (envUrl && envUrl.startsWith('https://')) {
-        return envUrl.replace(/\/+$/, '');
+      // If user configured an external HTTPS API url (e.g. on Render or Vercel backend)
+      if (envUrl.startsWith('http://') || envUrl.startsWith('https://')) {
+        let clean = envUrl.replace(/\/+$/, '');
+        if (!clean.endsWith('/api')) {
+          clean += '/api';
+        }
+        return clean;
       }
-      // On Vercel, the backend is serverless on the same domain: relative /api hits Vercel function
       return '/api';
     }
   }
-  // Local development: if envUrl set and not empty, use it, else default to /api
-  if (envUrl && envUrl.trim() !== '') {
-    return envUrl.replace(/\/+$/, '');
+  // Local development
+  if (envUrl && envUrl !== '') {
+    let clean = envUrl.replace(/\/+$/, '');
+    if ((clean.startsWith('http://') || clean.startsWith('https://')) && !clean.endsWith('/api')) {
+      clean += '/api';
+    }
+    return clean;
   }
   return '/api';
 };
@@ -27,6 +34,19 @@ const getAuthHeaders = () => {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {})
   };
+};
+
+// Safe JSON parser: gracefully catches 404 / HTML responses from Vercel without throwing SyntaxError
+const safeJson = async (res) => {
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    const text = await res.text().catch(() => '');
+    if (res.status === 404 || text.includes('The page') || text.includes('Cannot GET') || text.includes('<!DOCTYPE') || text.includes('<html')) {
+      throw new Error('Backend API not found (404). Please ensure your backend is deployed and VITE_API_URL is configured in your Vercel project settings.');
+    }
+    throw new Error(`Server returned status ${res.status}: ${text.slice(0, 100)}`);
+  }
+  return await res.json();
 };
 
 // Helper for fetch with timeout (default 8000ms to allow serverless cold starts & Atlas connections)
@@ -49,7 +69,7 @@ export const api = {
     try {
       const res = await fetchWithTimeout(`${getBase()}/health`, {}, 5000);
       if (res.ok) {
-        return await res.json();
+        return await safeJson(res);
       }
     } catch {
       // Offline or network error
@@ -62,7 +82,7 @@ export const api = {
     try {
       const res = await fetchWithTimeout(`${getBase()}/projects`);
       if (res.ok) {
-        const data = await res.json();
+        const data = await safeJson(res);
         if (data.data && Array.isArray(data.data)) {
           localStorage.setItem('ritik_cached_projects', JSON.stringify(data.data));
           return data.data;
@@ -90,7 +110,7 @@ export const api = {
         headers: getAuthHeaders(),
         body: JSON.stringify(projectData)
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (res.ok && data.data) {
         const current = await this.getProjects();
         const updated = [data.data, ...current.filter((p) => (p.id || p._id) !== (data.data.id || data.data._id))];
@@ -124,7 +144,7 @@ export const api = {
         headers: getAuthHeaders(),
         body: JSON.stringify(projectData)
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (res.ok && data.data) {
         const current = await this.getProjects();
         const updated = current.map((p) => ((p.id || p._id) === id ? data.data : p));
@@ -153,7 +173,7 @@ export const api = {
         headers: getAuthHeaders()
       });
       if (res.ok) {
-        const result = await res.json();
+        const result = await safeJson(res);
         const cached = localStorage.getItem('ritik_cached_projects');
         if (cached) {
           try {
@@ -164,7 +184,7 @@ export const api = {
         }
         return result;
       }
-      const data = await res.json().catch(() => ({}));
+      const data = await safeJson(res).catch(() => ({}));
       throw new Error(data.message || 'Failed to delete project');
     } catch (err) {
       const token = localStorage.getItem('ritik_portfolio_token');
@@ -183,7 +203,7 @@ export const api = {
     try {
       const res = await fetchWithTimeout(`${getBase()}/skills`);
       if (res.ok) {
-        const data = await res.json();
+        const data = await safeJson(res);
         if (data.data && Array.isArray(data.data)) {
           localStorage.setItem('ritik_cached_skills', JSON.stringify(data.data));
           return data.data;
@@ -211,7 +231,7 @@ export const api = {
         headers: getAuthHeaders(),
         body: JSON.stringify(skillData)
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (res.ok && data.data) {
         const current = await this.getSkills();
         const updated = [...current, data.data];
@@ -244,7 +264,7 @@ export const api = {
         headers: getAuthHeaders(),
         body: JSON.stringify(skillData)
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (res.ok && data.data) {
         const current = await this.getSkills();
         const updated = current.map((s) => ((s.id || s._id) === id ? data.data : s));
@@ -273,7 +293,7 @@ export const api = {
         headers: getAuthHeaders()
       });
       if (res.ok) {
-        const result = await res.json();
+        const result = await safeJson(res);
         const cached = localStorage.getItem('ritik_cached_skills');
         if (cached) {
           try {
@@ -284,7 +304,7 @@ export const api = {
         }
         return result;
       }
-      const data = await res.json().catch(() => ({}));
+      const data = await safeJson(res).catch(() => ({}));
       throw new Error(data.message || 'Failed to delete skill');
     } catch (err) {
       const token = localStorage.getItem('ritik_portfolio_token');
@@ -306,7 +326,7 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(messageData)
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (res.ok) return data;
     } catch {
       // Offline fallback storage
@@ -329,7 +349,7 @@ export const api = {
         headers: getAuthHeaders()
       });
       if (res.ok) {
-        const data = await res.json();
+        const data = await safeJson(res);
         return data.data;
       }
     } catch {
@@ -344,7 +364,7 @@ export const api = {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
-      if (res.ok) return await res.json();
+      if (res.ok) return await safeJson(res);
     } catch {
       // Offline fallback
     }
@@ -362,7 +382,7 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.message || 'Login failed');
       if (data.token) {
         localStorage.setItem('ritik_portfolio_token', data.token);
@@ -399,7 +419,7 @@ export const api = {
         localStorage.removeItem('ritik_portfolio_user');
         return null;
       }
-      const data = await res.json();
+      const data = await safeJson(res);
       return data.user;
     } catch {
       return JSON.parse(localStorage.getItem('ritik_portfolio_user') || 'null');
@@ -412,7 +432,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify({ currentPassword, newPassword })
     });
-    const data = await res.json();
+    const data = await safeJson(res);
     if (!res.ok) throw new Error(data.message || 'Failed to change password');
     return data;
   },
@@ -515,7 +535,7 @@ export const api = {
     try {
       const res = await fetchWithTimeout(`${getBase()}/resume`);
       if (res.ok) {
-        const json = await res.json();
+        const json = await safeJson(res);
         if (json.data) {
           localStorage.setItem('ritik_cached_resume', JSON.stringify(json.data));
           return json.data;
@@ -555,7 +575,7 @@ export const api = {
         headers,
         body: formData
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.message || 'Upload failed');
       if (data.data) {
         localStorage.setItem('ritik_cached_resume', JSON.stringify(data.data));
@@ -585,7 +605,7 @@ export const api = {
         headers: getAuthHeaders(),
         body: JSON.stringify({ customUrl, fileName })
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.message || 'Failed to update link');
       if (data.data) {
         localStorage.setItem('ritik_cached_resume', JSON.stringify(data.data));
@@ -613,7 +633,7 @@ export const api = {
       });
       if (res.ok) {
         localStorage.removeItem('ritik_cached_resume');
-        return await res.json();
+        return await safeJson(res);
       }
     } catch {}
     localStorage.removeItem('ritik_cached_resume');
