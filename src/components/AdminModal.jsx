@@ -60,6 +60,10 @@ export default function AdminModal({
   const [newPass, setNewPass] = useState('');
   const [passMsg, setPassMsg] = useState({ text: '', type: '' });
 
+  // Database Connection & Cloud Sync state
+  const [dbStatus, setDbStatus] = useState(null);
+  const [syncingData, setSyncingData] = useState(false);
+
   // Resume state
   const [resumeData, setResumeData] = useState(null);
   const [resumeLoading, setResumeLoading] = useState(false);
@@ -71,6 +75,7 @@ export default function AdminModal({
 
   useEffect(() => {
     if (isAdmin) {
+      api.checkDbHealth().then(res => setDbStatus(res)).catch(() => {});
       if (activeTab === 'messages') {
         loadMessages();
       } else if (activeTab === 'resume') {
@@ -78,6 +83,25 @@ export default function AdminModal({
       }
     }
   }, [isAdmin, activeTab]);
+
+  const handleSyncToCloud = async () => {
+    setSyncingData(true);
+    try {
+      const res = await api.syncLocalDataToCloud();
+      if (res.syncedProjects > 0 || res.syncedSkills > 0) {
+        notify(`Successfully synced ${res.syncedProjects} projects & ${res.syncedSkills} skills to MongoDB Atlas!`, 'success');
+        setTimeout(() => {
+          if (typeof window !== 'undefined') window.location.reload();
+        }, 1200);
+      } else {
+        notify('All local data is already up to date in MongoDB Atlas!', 'info');
+      }
+    } catch (err) {
+      notify('Failed to sync: ' + err.message, 'error');
+    } finally {
+      setSyncingData(false);
+    }
+  };
 
   const loadResume = async () => {
     setResumeLoading(true);
@@ -238,16 +262,7 @@ export default function AdminModal({
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/auth/change-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('ritik_portfolio_token')}`
-        },
-        body: JSON.stringify({ currentPassword: currPass, newPassword: newPass })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to change password');
+      await api.changePassword(currPass, newPass);
       setPassMsg({ text: 'Password updated successfully!', type: 'success' });
       setCurrPass('');
       setNewPass('');
@@ -433,16 +448,33 @@ export default function AdminModal({
               {activeTab === 'projects' && (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
-                      Add, update, or remove projects. Changes immediately reflect in real time.
-                    </p>
-                    <button
-                      onClick={onOpenAddProject}
-                      className="btn-primary"
-                      style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem' }}
-                    >
-                      <Plus size={14} /> Add Project
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: 0 }}>
+                        Add, update, or remove projects. Changes immediately reflect in real time.
+                      </p>
+                      <span style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '2px 8px', borderRadius: '999px', backgroundColor: dbStatus?.database?.includes('mongodb') ? '#d1fae5' : '#fef3c7', color: dbStatus?.database?.includes('mongodb') ? '#065f46' : '#92400e', fontWeight: 600 }}>
+                        ● {dbStatus?.database?.includes('mongodb') ? 'MongoDB Atlas (Global)' : 'Checking Cloud...'}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <button
+                        onClick={handleSyncToCloud}
+                        disabled={syncingData}
+                        className="btn-outline"
+                        style={{ padding: '0.45rem 0.8rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                        title="Upload any edits saved on this browser to MongoDB Atlas so all devices see them"
+                      >
+                        <RefreshCw size={13} className={syncingData ? 'animate-spin' : ''} />
+                        {syncingData ? 'Syncing...' : 'Sync to Cloud'}
+                      </button>
+                      <button
+                        onClick={onOpenAddProject}
+                        className="btn-primary"
+                        style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem' }}
+                      >
+                        <Plus size={14} /> Add Project
+                      </button>
+                    </div>
                   </div>
 
                   {projects.length === 0 ? (
