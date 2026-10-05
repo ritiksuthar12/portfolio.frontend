@@ -58,14 +58,6 @@
   ],
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://portfolio-backend-ritik-s-build.vercel.app/api/$1"
-    },
-    {
-      "source": "/uploads/(.*)",
-      "destination": "https://portfolio-backend-ritik-s-build.vercel.app/uploads/$1"
-    },
-    {
       "source": "/((?!assets/|robots.txt|sitemap.xml|.*\\..*).*)",
       "destination": "/index.html"
     }
