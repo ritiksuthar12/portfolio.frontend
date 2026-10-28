@@ -21,7 +21,7 @@ export default function AboutSection() {
           </h3>
           <p className="about-bio-text">
             I am a dedicated <strong>Full Stack MERN Developer</strong> currently pursuing my <strong>BCA</strong>.
-            I bridge the gap between high-performance backends and delightful user interfaces.
+            I bridge the gap between high-performance backends.
           </p>
           <p className="about-bio-text">
             With a solid grounding in <strong>modern full-stack architecture</strong>, I approach software
