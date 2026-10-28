@@ -1,0 +1,50 @@
+{
+  "background_color": "#ffffff",
+  "description": "Portfolio of Ritik Suthar, a Full Stack Developer specializing in React, Node.js, Express, and MongoDB. Explore featured web apps and projects.",
+  "dir": "ltr",
+  "display": "fullscreen",
+  "name": "Ritik Suthar Portfolio",
+  "orientation": "portrait",
+  "scope": "/",
+  "short_name": "Ritik Suthar Portfolio",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;rect width='100' height='100' rx='20' fill='%23111827'/&gt;&lt;text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='48' font-weight='800' fill='white'&gt;RS&lt;/text&gt;&lt;/svg&gt;",
+      "type": "image/svg+xml",
+      "isSquare": false,
+      "isPng": false,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    },
+    {
+      "src": "https://ritiksuthar.vercel.app/favicon.svg",
+      "isSquare": false,
+      "isPng": false,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    },
+    {
+      "src": "https://portfolio-ritik-live.vercel.app/og-image.jpg",
+      "isSquare": false,
+      "isPng": false,
+      "isWebp": false,
+      "isJpg": true,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    }
+  ],
+  "id": "Ritik Suthar",
+  "lang": "en"
+}
